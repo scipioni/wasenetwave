@@ -1,0 +1,27 @@
+services:
+
+  wisenetwave:
+    image: galileo/wisenetwave
+    build:
+      context: .
+
+
+    volumes:
+      - ./runtime/config:/root/.config
+      - ./runtime/var:/opt/hanwha/mediaserver/var
+      - ./config:/opt/hanwha/mediaserver/etc
+      - ./entrypoint.sh:/entrypoint.sh
+
+    ports:
+      - 7001:7001
+
+
+  client:
+    image: galileo/wisenetclient
+    build:
+      context: ./client
+    volumes:
+      - /dev/shm:/dev/shm
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    environment:
+      - DISPLAY

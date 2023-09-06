@@ -1,0 +1,48 @@
+version: '3'
+
+vars:
+  GREETING: Hello, World!
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+
+  download:
+    cmds:
+      - mkdir -p download
+      - wget https://wavevms.com/hanwha/ubuntu-x64-server-installer -O download/wisenetwave.deb
+      - wget https://wavevms.com/hanwha/ubuntu-x64-client-installer -O client/wisenetclient.deb
+
+  build:
+    cmds:
+      - docker compose build
+
+  cli:
+    cmds:
+      - docker compose run --rm wisenetwave bash
+
+  start:
+    cmds:
+      - docker compose up
+    
+  destroy:
+    cmds:
+      - docker compose down
+
+  publish:all:
+    cmds:
+      - |
+        VERSION=5.1
+        CONTEXT=.
+        REPO="docker.csgalileo.org/wisenetwave:"
+
+        [ -n "$VERSION" ] || VERSION=$(git log -1 --pretty=%h)
+        TAG="$REPO$VERSION"
+        LATEST="${REPO}latest"
+        BUILD_TIMESTAMP=$( date '+%F_%H:%M:%S' )
+        DOCKER_BUILDKIT=1 docker build --tag "$TAG" --tag "$LATEST" --build-arg ENV=prod --build-arg VERSION="$VERSION" --build-arg BUILD_TIMESTAMP="$BUILD_TIMESTAMP" $CONTEXT
+
+        docker push "$TAG" 
+        docker push "$LATEST"
