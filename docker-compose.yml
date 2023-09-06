@@ -4,7 +4,7 @@ services:
     image: galileo/wisenetwave
     build:
       context: .
-
+    privileged: true
 
     volumes:
       - ./runtime/config:/root/.config
@@ -14,7 +14,6 @@ services:
 
     ports:
       - 7001:7001
-
 
   client:
     image: galileo/wisenetclient

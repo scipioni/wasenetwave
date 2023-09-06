@@ -14,6 +14,7 @@ tasks:
       - mkdir -p download
       - wget https://wavevms.com/hanwha/ubuntu-x64-server-installer -O download/wisenetwave.deb
       - wget https://wavevms.com/hanwha/ubuntu-x64-client-installer -O client/wisenetclient.deb
+      - wget https://wavevms.com/hanwha/arm-solidedge-server-installer -O download/wisenetwave-arm.deb
 
   build:
     cmds:
@@ -46,3 +47,12 @@ tasks:
 
         docker push "$TAG" 
         docker push "$LATEST"
+
+  # buildx:
+  #   desc: "build opencv"
+  #   cmds:
+  #     - docker buildx use {{.NAME}} || docker buildx create --use --name {{.NAME}} --driver-opt network=host
+  #     - defer: docker buildx use default
+  #     - docker buildx build --platform=linux/amd64,linux/arm64 --build-arg ARCHITECTURE=arm -t ${REGISTRY}/wisenetwave:${VERSION} --push ./opencv
+
+
