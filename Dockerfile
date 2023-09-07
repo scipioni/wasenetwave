@@ -1,24 +1,29 @@
-# Download base image ubuntu 22.04
-FROM ubuntu:22.04 as ubuntu
-
-ARG ARCHITECTURE=amd64
-ENV ARCHITECTURE $ARCHITECTURE
-
-# Disable Prompt During Packages Installation
+ FROM ubuntu:22.04 as main-linux-amd64
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt update
+COPY ./download/wisenetwave-amd64.deb /tmp
 
-FROM ubuntu
-
-
-COPY ./wisenetwave-${ARCHITECTURE}.deb /tmp
-
-RUN dpkg -i /tmp/*.deb || true
-RUN apt-get -y -f install
-
+RUN apt-get update && \
+    apt install -y /tmp/*.deb && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -f /tmp/*.deb
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod u+x /entrypoint.sh
+
+
+FROM ubuntu:22.04 as main-linux-arm64
+
+COPY ./download/wisenetwave-arm64.zip /tmp
+RUN apt-get update && \
+    apt-get install -y unzip libglib2.0-0 && \
+    rm -rf /var/lib/apt/lists/*
+RUN cd /tmp && unzip *.zip && ./install.sh
+RUN rm -fR /tmp/*
+COPY entrypoint-arm64.sh /entrypoint.sh
+RUN chmod u+x /entrypoint.sh
+
+
+FROM main-${TARGETOS}-${TARGETARCH}${TARGETVARIANT}
 
 CMD ["/entrypoint.sh"]

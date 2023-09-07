@@ -1,20 +1,22 @@
 version: '3'
 
 vars:
-  GREETING: Hello, World!
+  NAME: builder1
+
+dotenv: [".env"]
 
 tasks:
   default:
     cmds:
-      - echo "{{.GREETING}}"
+      - echo "wisenetwave version $VERSION"
     silent: true
 
   download:
     cmds:
       - mkdir -p download
-      - wget https://wavevms.com/hanwha/ubuntu-x64-server-installer -O download/wisenetwave.deb
+      - wget https://wavevms.com/hanwha/ubuntu-x64-server-installer -O download/wisenetwave-amd64.deb
       - wget https://wavevms.com/hanwha/ubuntu-x64-client-installer -O client/wisenetclient.deb
-      - wget https://wavevms.com/hanwha/arm-solidedge-server-installer -O download/wisenetwave-arm.deb
+      - wget https://wavevms.com/hanwha/arm-solidedge-server-installer -O download/wisenetwave-arm64.deb
 
   build:
     cmds:
@@ -32,27 +34,26 @@ tasks:
     cmds:
       - docker compose down
 
-  publish:all:
-    cmds:
-      - |
-        VERSION=5.1
-        CONTEXT=.
-        REPO="docker.csgalileo.org/wisenetwave:"
-
-        [ -n "$VERSION" ] || VERSION=$(git log -1 --pretty=%h)
-        TAG="$REPO$VERSION"
-        LATEST="${REPO}latest"
-        BUILD_TIMESTAMP=$( date '+%F_%H:%M:%S' )
-        DOCKER_BUILDKIT=1 docker build --tag "$TAG" --tag "$LATEST" --build-arg ENV=prod --build-arg VERSION="$VERSION" --build-arg BUILD_TIMESTAMP="$BUILD_TIMESTAMP" $CONTEXT
-
-        docker push "$TAG" 
-        docker push "$LATEST"
-
-  # buildx:
-  #   desc: "build opencv"
+  # publish:all:
   #   cmds:
-  #     - docker buildx use {{.NAME}} || docker buildx create --use --name {{.NAME}} --driver-opt network=host
-  #     - defer: docker buildx use default
-  #     - docker buildx build --platform=linux/amd64,linux/arm64 --build-arg ARCHITECTURE=arm -t ${REGISTRY}/wisenetwave:${VERSION} --push ./opencv
+  #     - |
+  #       CONTEXT=.
+  #       REPO="docker.csgalileo.org/wisenetwave:"
+
+  #       [ -n "$VERSION" ] || VERSION=$(git log -1 --pretty=%h)
+  #       TAG="$REPO$VERSION"
+  #       LATEST="${REPO}latest"
+  #       BUILD_TIMESTAMP=$( date '+%F_%H:%M:%S' )
+  #       DOCKER_BUILDKIT=1 docker build --tag "$TAG" --tag "$LATEST" --build-arg ENV=prod --build-arg VERSION="$VERSION" --build-arg BUILD_TIMESTAMP="$BUILD_TIMESTAMP" $CONTEXT
+
+  #       docker push "$TAG" 
+  #       docker push "$LATEST"
+
+  buildx:
+    desc: "build multi architecture"
+    cmds:
+      - docker buildx use {{.NAME}} || docker buildx create --use --name {{.NAME}} --driver-opt network=host
+      - defer: docker buildx use default
+      - docker buildx build --no-cache --progress=plain --platform=linux/amd64,linux/arm64 --build-arg ARCHITECTURE=arm -t ${REGISTRY}/wisenetwave:${VERSION} --push .
 
 
