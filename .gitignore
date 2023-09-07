@@ -2,3 +2,4 @@
 *.zst
 /config
 /runtime
+.env
