@@ -14,6 +14,8 @@ task buildx
 ```
 ## run local wise
 
+create video folder ./wisenetwave/config/'Wisenet WAVE Media'
+
 ```
 task build
 task start
