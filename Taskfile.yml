@@ -28,7 +28,7 @@ tasks:
 
   start:
     cmds:
-      - docker compose up
+      - docker compose up -d
     
   destroy:
     cmds:

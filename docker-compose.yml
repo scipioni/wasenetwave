@@ -6,6 +6,7 @@ services:
     build:
       context: .
     #privileged: true
+    restart: unless-stopped
     volumes:
       - ./runtime/config:/root/.config
       - ./runtime/var:/opt/hanwha/mediaserver/var
