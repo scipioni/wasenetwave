@@ -5,6 +5,7 @@ COPY ./download/wisenetwave-amd64.deb /tmp
 
 RUN apt-get update && \
     apt install -y /tmp/*.deb && \
+    apt install -y curl && \
     rm -rf /var/lib/apt/lists/* && \
     rm -f /tmp/*.deb
 
@@ -17,6 +18,7 @@ FROM ubuntu:22.04 as main-linux-arm64
 COPY ./download/wisenetwave-arm64.zip /tmp
 RUN apt-get update && \
     apt-get install -y unzip libglib2.0-0 && \
+    apt-get install -y curl iputils-ping && \
     rm -rf /var/lib/apt/lists/*
 RUN cd /tmp && unzip *.zip && ./install.sh
 RUN rm -fR /tmp/*

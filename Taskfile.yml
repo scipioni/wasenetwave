@@ -15,7 +15,7 @@ tasks:
     cmds:
       - mkdir -p download
       - wget https://wavevms.com/hanwha/ubuntu-x64-server-installer -O download/wisenetwave-amd64.deb
-      - wget https://wavevms.com/hanwha/ubuntu-x64-client-installer -O client/wisenetclient.deb
+      #- wget https://wavevms.com/hanwha/ubuntu-x64-client-installer -O client/wisenetclient.deb
       - wget https://wavevms.com/hanwha/arm-solidedge-server-installer -O download/wisenetwave-arm64.zip
 
   build:
