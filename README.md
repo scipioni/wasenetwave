@@ -1,7 +1,7 @@
-# wasenetwave
+# wisenetwave
 
 
-dockerized wasenetwave
+dockerized wisenetwave
 
 - copy env.sample in .env
 - task download (download *.dev packages)
